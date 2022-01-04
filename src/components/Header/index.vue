@@ -68,7 +68,7 @@ export default {
         // query: {
         //   keyWord: this.keyWord
         // }
-      }).catch(err => err)
+      })
     }
   }
 }
