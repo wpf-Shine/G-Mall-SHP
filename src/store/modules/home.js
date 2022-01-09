@@ -1,13 +1,17 @@
-import { getBaseCategoryList } from '@/api/home'
+import { getBaseCategoryList, reqgetBanner } from '@/api/home'
 // state  仓库存储数据的地方
 const state = {
-  categoryList: []
+  categoryList: [],
+  bannerList: []
 }
 
 // mutations 修改state的唯一手段
 const mutations = {
   CATEGORYLIST (state, categoryList) {
     state.categoryList = categoryList
+  },
+  BANNERLIST (state, bannerList) {
+    state.bannerList = bannerList
   }
 }
 
@@ -18,7 +22,12 @@ const actions = {
     if (res.code === 200) {
       commit("CATEGORYLIST", res.data)
     }
-    console.log(res);
+  },
+  async getBannerList ({ commit }) {
+    const res = await reqgetBanner()
+    if (res.code === 200) {
+      commit("BANNERLIST", res.data)
+    }
   }
 }
 
