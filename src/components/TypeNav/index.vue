@@ -1,7 +1,8 @@
 <template>
   <div class="type-nav">
     <div class="container"
-         @mouseleave="itemMouseleave()">
+         @mouseleave="itemMouseleave()"
+         @mouseenter="enterSortShow()">
       <h2 class="all">全部商品分类</h2>
       <nav class="nav">
         <a href="###">服装城</a>
@@ -13,59 +14,98 @@
         <a href="###">有趣</a>
         <a href="###">秒杀</a>
       </nav>
-      <div class="sort">
-        <div class="all-sort-list2">
-          <div class="item"
-               v-for="(c1,index) in categoryList"
-               :key="c1.categoryId"
-               @mouseenter="itemMouseenter(index)"
-               :class="{cur:index === currentIndex}">
-            <h3>
-              <a href="">{{c1.categoryName}}</a>
-            </h3>
-            <div class="item-list clearfix">
-              <div class="subitem"
-                   v-for="c2 in c1.categoryChild"
-                   :key="c2.categoryId">
-                <dl class="fore">
-                  <dt>
-                    <a href="">{{c2.categoryName}}</a>
-                  </dt>
-                  <dd>
-                    <em v-for="c3 in c2.categoryChild"
-                        :key="c3.categoryId">
-                      <a href="">{{c3.categoryName}}</a>
-                    </em>
-                  </dd>
-                </dl>
+      <transition name="sort">
+        <div class="sort"
+             v-show="sortShow">
+          <div class="all-sort-list2"
+               @click="btnGoSearch">
+            <div class="item"
+                 v-for="(c1,index) in categoryList"
+                 :key="c1.categoryId"
+                 @mouseenter="itemMouseenter(index)"
+                 :class="{cur:index === currentIndex}">
+              <h3>
+                <a :data-categoryName="c1.categoryName"
+                   :data-category1Id="c1.categoryId">{{c1.categoryName}}</a>
+              </h3>
+              <div class="item-list clearfix"
+                   :style="{display:currentIndex === index ? 'block' : 'none'}">
+                <div class="subitem"
+                     v-for="c2 in c1.categoryChild"
+                     :key="c2.categoryId">
+                  <dl class="fore">
+                    <dt>
+                      <a :data-categoryName="c2.categoryName"
+                         :data-category2Id="c2.categoryId">{{c2.categoryName}}</a>
+                    </dt>
+                    <dd>
+                      <em v-for="c3 in c2.categoryChild"
+                          :key="c3.categoryId">
+                        <a :data-categoryName="c3.categoryName"
+                           :data-category3Id="c3.categoryId">{{c3.categoryName}}</a>
+                      </em>
+                    </dd>
+                  </dl>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
+      </transition>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState } from 'vuex'
+import { throttle } from 'lodash'
 
 export default {
   name: 'TypeNav',
   data () {
     return {
-      currentIndex: -1
+      currentIndex: -1,
+      sortShow: true
     }
   },
   mounted () {
-    this.$store.dispatch('getCategory')
+    if (this.$route.path !== '/home') {
+      this.sortShow = false
+    }
   },
   methods: {
-    itemMouseenter (index) {
+    itemMouseenter: throttle(function (index) {
       this.currentIndex = index
-    },
+    }, 50),
     itemMouseleave () {
       this.currentIndex = -1
+      if (this.$route.path !== '/home') {
+        this.sortShow = false
+      }
+    },
+    btnGoSearch (event) {
+      let element = event.target
+      let { categoryname, category1id, category2id, category3id } = element.dataset
+      if (categoryname) {
+        let location = { name: 'search' }
+        let query = { categoryName: categoryname }
+        if (category1id) {
+          query.category1Id = category1id
+        } else if (category2id) {
+          query.category2Id = category2id
+        } else {
+          query.category3Id = category3id
+        }
+        if (this.$route.params) {
+          location.params = this.$route.params
+          location.query = query
+          this.$router.push(location)
+        }
+
+      }
+    },
+    enterSortShow () {
+      this.sortShow = true
     }
   },
   computed: {
@@ -184,17 +224,21 @@ export default {
               }
             }
           }
-
-          &:hover {
-            .item-list {
-              display: block;
-            }
-          }
         }
         .cur {
           background-color: #e1251b;
         }
       }
+    }
+    .sort-enter {
+      height: 0;
+    }
+    .sort-enter-to {
+      height: 461px;
+      overflow: hidden;
+    }
+    .sort-enter-active {
+      transition: height 0.5s linear;
     }
   }
 }

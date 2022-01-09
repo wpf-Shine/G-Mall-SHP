@@ -1,16 +1,22 @@
 <template>
   <div>
-    <h2>query---{{$route.query}}</h2>
-    <h2>params---{{$route.params}}</h2>
-    <h3>{{keyWord}}</h3>
+    <TypeNav></TypeNav>
+    <h1>111</h1>
   </div>
 </template>
 
 <script>
+import TypeNav from '@/components/TypeNav'
 export default {
   name: 'Search',
-  props: ['keyWord']
+  components: {
+    TypeNav
+  },
+  mounted () {
+  },
+  methods: {
 
+  }
 }
 </script>
 

@@ -59,16 +59,16 @@ export default {
   },
   methods: {
     goSearch () {
-      this.$router.push({
+      let location = {
         name: 'search',
         params: {
           keyWord: this.keyWord || undefined
         }
-        // path: '/search',
-        // query: {
-        //   keyWord: this.keyWord
-        // }
-      })
+      }
+      if (Object.keys(this.$route.query).length !== 0) {
+        location.query = this.$route.query
+      }
+      this.$router.push(location)
     }
   }
 }
