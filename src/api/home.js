@@ -15,3 +15,10 @@ export function reqgetBanner () {
     method: 'get'
   })
 }
+
+export function reqGetFloorList () {
+  return mockRequest({
+    url: '/floor',
+    mothed: 'get'
+  })
+}

@@ -1,6 +1,7 @@
 <template>
   <!-- Swiper -->
-  <div class="swiper-container">
+  <div class="swiper-container"
+       ref="mySwiper">
     <div class="swiper-wrapper">
       <div class="swiper-slide"
            v-for="carousel in imagesList"
@@ -39,9 +40,10 @@ export default {
   watch: {
     // 监听imagesList数据的变化
     imagesList: {
+      immediate: true,
       handler (newValue, oldValue) {
         this.$nextTick(() => {
-          var swiper = new Swiper('.swiper-container', {
+          var swiper = new Swiper(this.$refs.mySwiper, {
             loop: true,
             spaceBetween: 30,
             centeredSlides: true,
