@@ -19,6 +19,14 @@ export function reqgetBanner () {
 export function reqGetFloorList () {
   return mockRequest({
     url: '/floor',
-    mothed: 'get'
+    method: 'get'
+  })
+}
+
+export function reqGetSearchInfo (data) {
+  return request({
+    url: '/list',
+    method: 'post',
+    data
   })
 }
