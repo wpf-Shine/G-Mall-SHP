@@ -57,6 +57,11 @@ export default {
       keyWord: ''
     }
   },
+  mounted () {
+    this.$bus.$on('clearSearchInp', () => {
+      this.keyWord = ''
+    })
+  },
   methods: {
     goSearch () {
       let location = {

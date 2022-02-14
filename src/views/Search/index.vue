@@ -11,43 +11,44 @@
             </li>
           </ul>
           <ul class="fl sui-tag">
-            <li class="with-x">手机</li>
-            <li class="with-x">iphone<i>x</i></li>
-            <li class="with-x">华为<i>x</i></li>
-            <li class="with-x">OPPO<i>x</i></li>
+            <li class="with-x"
+                v-if="searchParams.categoryName">{{searchParams.categoryName}}<i @click="removeCategoryName">x</i></li>
+            <li class="with-x"
+                v-if="searchParams.keyWord">{{searchParams.keyWord}}<i @click="removeKeyWord">x</i></li>
+            <li class="with-x"
+                v-if="searchParams.trademark">{{searchParams.trademark.split(':')[1]}}<i @click="removeTradeMark">x</i></li>
+            <li class="with-x"
+                v-for="item,index in searchParams.props"
+                :key="item">{{item.split(':')[1]}}<i @click="removeProps(index)">x</i></li>
           </ul>
         </div>
 
         <!--selector-->
-        <SearchSelector />
+        <SearchSelector @trademarkinfo="tradeMarkHandler"
+                        @attrinfo="attrInfo" />
 
         <!--details-->
         <div class="details clearfix">
           <div class="sui-navbar">
             <div class="navbar-inner filter">
               <ul class="sui-nav">
-                <li class="active">
-                  <a href="#">综合</a>
+                <li :class="{active:isOrderone}"
+                    @click="changeOrder('1')">
+                  <a href="#">综合<span v-show="isOrderone"
+                          class="iconfont"
+                          :class="{'icon-arrowdown':isDesc,'icon-direction-up':isAsc}"></span></a>
                 </li>
-                <li>
-                  <a href="#">销量</a>
-                </li>
-                <li>
-                  <a href="#">新品</a>
-                </li>
-                <li>
-                  <a href="#">评价</a>
-                </li>
-                <li>
-                  <a href="#">价格⬆</a>
-                </li>
-                <li>
-                  <a href="#">价格⬇</a>
+                <li :class="{active:isOrdertwo}"
+                    @click="changeOrder('2')">
+                  <a href="#">价格<span v-show="isOrdertwo"
+                          class="iconfont"
+                          :class="{'icon-arrowdown':isDesc,'icon-direction-up':isAsc}"></span></a>
                 </li>
               </ul>
             </div>
           </div>
-          <div class="goods-list">
+          <div class="
+                          goods-list">
             <ul class="yui3-g">
               <li class="yui3-u-1-5"
                   v-for="good in goodList"
@@ -82,36 +83,12 @@
               </li>
             </ul>
           </div>
-          <div class="fr page">
-            <div class="sui-pagination clearfix">
-              <ul>
-                <li class="prev disabled">
-                  <a href="#">«上一页</a>
-                </li>
-                <li class="active">
-                  <a href="#">1</a>
-                </li>
-                <li>
-                  <a href="#">2</a>
-                </li>
-                <li>
-                  <a href="#">3</a>
-                </li>
-                <li>
-                  <a href="#">4</a>
-                </li>
-                <li>
-                  <a href="#">5</a>
-                </li>
-                <li class="dotted"><span>...</span></li>
-                <li class="next">
-                  <a href="#">下一页»</a>
-                </li>
-              </ul>
-              <div><span>共10页&nbsp;</span></div>
-            </div>
-          </div>
         </div>
+        <Pagination :pageIndex="searchParams.pageNo"
+                    :pageSize="searchParams.pageSize"
+                    :total="total"
+                    :continues="5"
+                    @getPageNo="getPageNo" />
       </div>
     </div>
   </div>
@@ -119,13 +96,15 @@
 
 <script>
 import SearchSelector from './SearchSelector/SearchSelector'
+import Pagination from '@/components/Pagination'
 import TypeNav from '@/components/TypeNav'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapState } from 'vuex'
 export default {
   name: 'Search',
   components: {
     SearchSelector,
-    TypeNav
+    TypeNav,
+    Pagination
   },
   data () {
     return {
@@ -134,8 +113,8 @@ export default {
         category2Id: '',
         category3Id: "",
         categoryName: "",
-        keyword: "",
-        order: "",
+        keyWord: "",
+        order: "1:desc",
         pageNo: 1,
         pageSize: 10,
         props: [],
@@ -150,15 +129,86 @@ export default {
     this.getSearchData()
   },
   computed: {
-    ...mapGetters(['goodList'])
+    ...mapGetters(['goodList']),
+    ...mapState({
+      total: state => state.search.searchList.total
+    }),
+    isOrderone () {
+      return this.searchParams.order.indexOf(1) >= 0
+    },
+    isOrdertwo () {
+      return this.searchParams.order.indexOf(2) >= 0
+    },
+    isAsc () {
+      return this.searchParams.order.indexOf('asc') >= 0
+    },
+    isDesc () {
+      return this.searchParams.order.indexOf('desc') >= 0
+    }
   },
   methods: {
     getSearchData () {
       this.$store.dispatch('getSearchInfo', this.searchParams)
+    },
+    removeCategoryName () {
+      this.searchParams.categoryName = undefined
+      this.searchParams.category1Id = undefined
+      this.searchParams.category2Id = undefined
+      this.searchParams.category3Id = undefined
+      this.getSearchData()
+      if (this.$route.params) {
+        this.$router.push({ name: 'search', params: this.$route.params })
+      }
+    },
+    removeKeyWord () {
+      this.searchParams.keyWord = undefined
+      this.getSearchData()
+      this.$bus.$emit('clearSearchInp')
+      if (this.$route.query) {
+        this.$router.push({ name: 'search', query: this.$route.query })
+      }
+    },
+    tradeMarkHandler (data) {
+      this.searchParams.trademark = `${data.tmId}:${data.tmName}`
+      this.getSearchData()
+    },
+    removeTradeMark () {
+      this.searchParams.trademark = undefined
+      this.getSearchData()
+    },
+    attrInfo (attr, attrvalue) {
+      let props = `${attr.attrId}:${attrvalue}:${attr.attrName}`
+      //数组去重
+      if (this.searchParams.props.indexOf(props) === -1) {
+        this.searchParams.props.push(props)
+        this.getSearchData()
+      }
+    },
+    removeProps (index) {
+      this.searchParams.props.splice(index, 1)
+      this.getSearchData()
+    },
+    changeOrder (flag) {
+      let originOrder = this.searchParams.order
+      let originFlag = this.searchParams.order.split(':')[0]
+      let originSort = this.searchParams.order.split(':')[1]
+      let newOrder = ''
+      if (flag === originFlag) {
+        newOrder = `${originFlag}:${originSort === 'desc' ? 'asc' : 'desc'}`
+      } else {
+        newOrder = `${flag}:${'desc'}`
+      }
+      this.searchParams.order = newOrder
+      this.getSearchData()
+    },
+    //获取当前页码
+    getPageNo (pageIndex) {
+      this.searchParams.pageNo = pageIndex
+      this.getSearchData()
     }
   },
   watch: {
-    $route (newValue, oldValue) {
+    $route () {
       Object.assign(this.searchParams, this.$route.query, this.$route.params)
       this.getSearchData()
       this.searchParams.category1Id = ''
@@ -408,93 +458,6 @@ export default {
                 }
               }
             }
-          }
-        }
-      }
-
-      .page {
-        width: 733px;
-        height: 66px;
-        overflow: hidden;
-        float: right;
-
-        .sui-pagination {
-          margin: 18px 0;
-
-          ul {
-            margin-left: 0;
-            margin-bottom: 0;
-            vertical-align: middle;
-            width: 490px;
-            float: left;
-
-            li {
-              line-height: 18px;
-              display: inline-block;
-
-              a {
-                position: relative;
-                float: left;
-                line-height: 18px;
-                text-decoration: none;
-                background-color: #fff;
-                border: 1px solid #e0e9ee;
-                margin-left: -1px;
-                font-size: 14px;
-                padding: 9px 18px;
-                color: #333;
-              }
-
-              &.active {
-                a {
-                  background-color: #fff;
-                  color: #e1251b;
-                  border-color: #fff;
-                  cursor: default;
-                }
-              }
-
-              &.prev {
-                a {
-                  background-color: #fafafa;
-                }
-              }
-
-              &.disabled {
-                a {
-                  color: #999;
-                  cursor: default;
-                }
-              }
-
-              &.dotted {
-                span {
-                  margin-left: -1px;
-                  position: relative;
-                  float: left;
-                  line-height: 18px;
-                  text-decoration: none;
-                  background-color: #fff;
-                  font-size: 14px;
-                  border: 0;
-                  padding: 9px 18px;
-                  color: #333;
-                }
-              }
-
-              &.next {
-                a {
-                  background-color: #fafafa;
-                }
-              }
-            }
-          }
-
-          div {
-            color: #333;
-            font-size: 14px;
-            float: right;
-            width: 241px;
           }
         }
       }
