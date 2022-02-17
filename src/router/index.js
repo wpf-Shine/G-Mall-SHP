@@ -1,6 +1,8 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
+import routes from './routes'
+
 Vue.use(Router)
 //先把Router的原型对象的push保存一份
 let originPush = Router.prototype.push
@@ -27,44 +29,11 @@ Router.prototype.replace = function (location, resolve, reject) {
 }
 
 const router = new Router({
-  routes: [
-    {
-      path: '/',
-      redirect: '/home'
-    },
-    {
-      path: '/home',
-      component: () => import('@/views/Home'),
-      meta: { showFooter: true }
-    },
-    // params写法
-    {
-      path: '/search/:keyWord?',
-      component: () => import('@/views/Search'),
-      meta: { showFooter: true },
-      name: 'search',
-      props: ($route) => {
-        return {
-          keyWord: $route.params.keyWord
-        }
-      }
-    },
-    // {
-    //   path: '/search',
-    //   component: () => import('@/views/Search'),
-    //   meta: { showFooter: true },
-    // },
-    {
-      path: '/login',
-      component: () => import('@/views/Login'),
-      meta: { showFooter: false }
-    },
-    {
-      path: '/register',
-      component: () => import('@/views/Register'),
-      meta: { showFooter: false }
-    }
-  ]
+  routes,
+  //滚动行为
+  scrollBehavior (to, from, savedPosition) {
+    return { y: 0 }
+  }
 })
 
 export default router

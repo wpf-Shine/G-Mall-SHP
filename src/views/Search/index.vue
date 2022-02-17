@@ -47,16 +47,16 @@
               </ul>
             </div>
           </div>
-          <div class="
-                          goods-list">
+          <div class="goods-list">
             <ul class="yui3-g">
               <li class="yui3-u-1-5"
                   v-for="good in goodList"
                   :key="good.id">
                 <div class="list-wrap">
                   <div class="p-img">
-                    <a href="item.html"
-                       target="_blank"><img :src="good.defaultImg" /></a>
+                    <router-link :to="`detail/${good.id}`">
+                      <img :src="good.defaultImg" />
+                    </router-link>
                   </div>
                   <div class="price">
                     <strong>
@@ -65,9 +65,7 @@
                     </strong>
                   </div>
                   <div class="attr">
-                    <a target="_blank"
-                       href="item.html"
-                       title="促销信息，下单即赠送三个月CIBN视频会员卡！【小米电视新品4A 58 火爆预约中】">{{good.title}}</a>
+                    <router-link :to="`detail/${good.id}`">{{good.title}}</router-link>
                   </div>
                   <div class="commit">
                     <i class="command">已有<span>2000</span>人评价</i>
