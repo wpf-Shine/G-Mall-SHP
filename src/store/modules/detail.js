@@ -1,7 +1,9 @@
 import { reqGoodsInfo, reqAddOrUpdateShopCart } from '@/api/detail'
+import { getUUID } from '@/utils/index'
 
 const state = {
-  goodsInfo: {}
+  goodsInfo: {},
+  uuid_token: getUUID()
 }
 
 const mutations = {
@@ -18,7 +20,7 @@ const actions = {
   },
   async addOrUpdateShopCart ({ commit }, { skuId, skuNum }) {
     const res = await reqAddOrUpdateShopCart(skuId, skuNum)
-    console.log(res);
+    return res
   }
 }
 export default {

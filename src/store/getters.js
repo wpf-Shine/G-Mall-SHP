@@ -4,7 +4,8 @@ const getters = {
   attrsList: state => state.search.searchList.attrsList,
   categoryView: state => state.detail.goodsInfo.categoryView || {},
   skuInfo: state => state.detail.goodsInfo.skuInfo || {},
-  spuSaleAttrList: state => state.detail.goodsInfo.spuSaleAttrList || []
+  spuSaleAttrList: state => state.detail.goodsInfo.spuSaleAttrList || [],
+  cartList: state => state.shopcart.cartList[0] || []
 }
 
 export default getters

@@ -25,6 +25,18 @@ export default [
     component: () => import('@/views/Detail'),
     meta: { showFooter: true }
   },
+  {
+    path: '/addcartsuccess',
+    name: 'addcartsuccess',
+    component: () => import('@/views/AddCartSuccess'),
+    meta: { showFooter: true }
+  },
+  {
+    path: '/shopcart',
+    name: 'shopcart',
+    component: () => import('@/views/ShopCart'),
+    meta: { showFooter: true }
+  },
   // {
   //   path: '/search',
   //   component: () => import('@/views/Search'),
