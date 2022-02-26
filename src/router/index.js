@@ -1,7 +1,9 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 import routes from './routes'
+import { removeToken } from '@/utils/auth'
 
 Vue.use(Router)
 //先把Router的原型对象的push保存一份
@@ -33,6 +35,38 @@ const router = new Router({
   //滚动行为
   scrollBehavior (to, from, savedPosition) {
     return { y: 0 }
+  }
+})
+
+// 全局守卫
+router.beforeEach(async (to, from, next) => {
+  next()
+  let token = store.state.user.token
+  let userInfo = store.state.user.userInfo
+  //已登录
+  if (token) {
+    if (to.path == '/login') {
+      next('/')
+    }
+    else {
+      if (Object.keys(userInfo).length !== 0) {
+        next()
+      }
+      else {
+        try {
+          await store.dispatch('getUserInfo')
+          next()
+        } catch (err) {
+          //获取失败  token失效
+          removeToken()
+          next('/login')
+        }
+      }
+    }
+  }
+  //未登录
+  else {
+    next()
   }
 })
 

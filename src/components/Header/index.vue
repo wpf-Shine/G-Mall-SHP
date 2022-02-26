@@ -5,16 +5,21 @@
       <div class="container">
         <div class="loginList">
           <p>尚品汇欢迎您！</p>
-          <p>
+          <p v-if="Object.keys(userInfo).length==0 ">
             <span>请</span>
-            <router-link to="login">登录</router-link>
-            <router-link to="register"
+            <router-link to="/login">登录</router-link>
+            <router-link to="/register"
                          class="register">免费注册</router-link>
+          </p>
+          <p v-else>
+            <a href="javascript:;">{{userInfo.name}}</a> |
+            <a href="javascript:;"
+               @click="btnLogout">退出登录</a>
           </p>
         </div>
         <div class="typeList">
           <a href="###">我的订单</a>
-          <a href="###">我的购物车</a>
+          <router-link to="/shopcart">我的购物车</router-link>
           <a href="###">我的尚品汇</a>
           <a href="###">尚品汇会员</a>
           <a href="###">企业采购</a>
@@ -50,12 +55,16 @@
 </template>
     
 <script>
+import { mapGetters } from 'vuex'
 export default {
   name: 'Header',
   data () {
     return {
       keyWord: ''
     }
+  },
+  computed: {
+    ...mapGetters(['userInfo'])
   },
   mounted () {
     this.$bus.$on('clearSearchInp', () => {
@@ -74,6 +83,16 @@ export default {
         location.query = this.$route.query
       }
       this.$router.push(location)
+    },
+    async btnLogout () {
+      try {
+        await this.$store.dispatch('userLogout')
+        this.$router.push('/home')
+      }
+      catch (err) {
+        alert(err)
+      }
+
     }
   }
 }
