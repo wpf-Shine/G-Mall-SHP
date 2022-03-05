@@ -37,11 +37,46 @@ export default [
     component: () => import('@/views/ShopCart'),
     meta: { showFooter: true }
   },
-  // {
-  //   path: '/search',
-  //   component: () => import('@/views/Search'),
-  //   meta: { showFooter: true },
-  // },
+  {
+    path: '/trade',
+    name: 'trade',
+    component: () => import('@/views/Trade'),
+    meta: { showFooter: true }
+  },
+  {
+    path: '/pay/:orderId?',
+    name: 'pay',
+    component: () => import('@/views/Pay'),
+    meta: { showFooter: true }
+  },
+  {
+    path: '/paysuccess',
+    name: 'paysuccess',
+    component: () => import('@/views/PaySuccess'),
+    meta: { showFooter: true }
+  },
+  {
+    path: '/center',
+    name: 'center',
+    component: () => import('@/views/Center'),
+    meta: { showFooter: true },
+    children: [
+      {
+        path: 'myorder',
+        name: 'myorder',
+        component: () => import('@/views/Center/components/MyOrder.vue')
+      },
+      {
+        path: 'grouporder',
+        name: 'grouporder',
+        component: () => import('@/views/Center/components/GroupOrder.vue')
+      },
+      {
+        path: '/center',
+        redirect: '/center/myorder'
+      }
+    ]
+  },
   {
     path: '/login',
     component: () => import('@/views/Login'),

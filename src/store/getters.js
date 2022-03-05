@@ -8,7 +8,11 @@ const getters = {
   cartList: state => state.shopcart.cartList[0] || [],
   code: state => state.user.code,
   token: state => state.user.token,
-  userInfo: state => state.user.userInfo
+  userInfo: state => state.user.userInfo,
+  addressInfo: state => state.trade.addressInfo,
+  orderInfo: state => state.trade.orderInfo,
+  payInfo: state => state.pay.payInfo,
+  myOrderList: state => state.center.myOrderList
 }
 
 export default getters

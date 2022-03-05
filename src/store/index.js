@@ -6,7 +6,11 @@ import search from './modules/search'
 import detail from './modules/detail'
 import shopcart from './modules/shopcart'
 import user from './modules/user'
+import trade from './modules/trade'
+import pay from './modules/pay'
+import center from './modules/center'
 import getters from './getters'
+
 
 
 Vue.use(Vuex)
@@ -17,7 +21,10 @@ export default new Vuex.Store({
     search,
     detail,
     shopcart,
-    user
+    user,
+    trade,
+    pay,
+    center
   },
   getters
 })
