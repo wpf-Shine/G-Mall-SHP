@@ -7,6 +7,16 @@ import store from '@/store'
 import { MessageBox } from 'element-ui'
 Vue.prototype.$msgbox = MessageBox
 Vue.prototype.$alert = MessageBox.alert
+
+import VueLazyload from 'vue-lazyload'
+import atm from '@/assets/1.gif'
+Vue.use(VueLazyload, {
+  loading: atm
+})
+
+//表单验证插件
+import '@/plugins/veeValidata'
+
 //mock数据
 import '@/mock/mockServe'
 

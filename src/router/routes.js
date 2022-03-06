@@ -41,13 +41,27 @@ export default [
     path: '/trade',
     name: 'trade',
     component: () => import('@/views/Trade'),
-    meta: { showFooter: true }
+    meta: { showFooter: true },
+    beforeEnter: (to, from, next) => {
+      if (from.path == '/shopcart') {
+        next()
+      } else {
+        next(false)
+      }
+    }
   },
   {
     path: '/pay/:orderId?',
     name: 'pay',
     component: () => import('@/views/Pay'),
-    meta: { showFooter: true }
+    meta: { showFooter: true },
+    beforeEnter: (to, from, next) => {
+      if (from.path == '/trade') {
+        next()
+      } else {
+        next(false)
+      }
+    }
   },
   {
     path: '/paysuccess',

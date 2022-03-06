@@ -13,7 +13,6 @@ const actions = {
     return new Promise((resolve, reject) => {
       reqMyOrderList(page, limit).then((response) => {
         const { data } = response
-        console.log(response);
         commit('MYORDERLIST', data)
         resolve()
       }).catch(err => {

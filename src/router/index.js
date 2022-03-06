@@ -40,7 +40,7 @@ const router = new Router({
 
 // 全局守卫
 router.beforeEach(async (to, from, next) => {
-  next()
+  // next()
   let token = store.state.user.token
   let userInfo = store.state.user.userInfo
   //已登录
@@ -66,6 +66,9 @@ router.beforeEach(async (to, from, next) => {
   }
   //未登录
   else {
+    if (to.path.indexOf('/trade') != -1 || to.path.indexOf('/pay') != -1 || to.path.indexOf('/center') != -1) {
+      next('/login?redirect=' + to.path)
+    }
     next()
   }
 })

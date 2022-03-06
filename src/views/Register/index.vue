@@ -11,41 +11,55 @@
         <label>手机号:</label>
         <input type="text"
                placeholder="请输入你的手机号"
+               name="phone"
+               v-validate="{required:true,regex: /^1\d{10}$/}"
+               :class="{invalid:errors.has('phone')}"
                v-model="phone">
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{errors.first('phone')}}</span>
       </div>
       <div class="content">
         <label>验证码:</label>
         <input type="text"
                placeholder="请输入验证码"
+               name="code"
+               v-validate="{required:true,regex: /^\d{6}$/}"
+               :class="{invalid:errors.has('code')}"
                v-model="code">
         <button style="width:100px;height:38px"
                 @click="btnGetCode">获取验证码</button>
         <!-- <img ref="code"
              src="http://182.92.128.115/api/user/passport/code"
              alt="code"> -->
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{errors.first('code')}}</span>
       </div>
       <div class="content">
         <label>登录密码:</label>
         <input type="password"
                placeholder="请输入你的登录密码"
+               name="password"
+               v-validate="{required:true,regex: /^[0-9A-Za-z]{8,20}$/}"
+               :class="{invalid:errors.has('password')}"
                v-model="password">
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{errors.first('password')}}</span>
       </div>
       <div class="content">
         <label>确认密码:</label>
         <input type="password"
                placeholder="请输入确认密码"
+               name="validatepassword"
+               v-validate="{required:true,is:password}"
+               :class="{invalid:errors.has('validatepassword')}"
                v-model="validatePassword">
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{errors.first('validatepassword')}}</span>
       </div>
       <div class="controls">
-        <input name="m1"
+        <input name="agree"
                type="checkbox"
+               v-validate="{required:true,agree:true}"
+               :class="{invalid:errors.has('agree')}"
                :checked="isAgree">
         <span>同意协议并注册《尚品汇用户协议》</span>
-        <span class="error-msg">错误提示信息</span>
+        <span class="error-msg">{{errors.first('agree')}}</span>
       </div>
       <div class="btn">
         <button @click="btnRegister">完成注册</button>
@@ -93,9 +107,10 @@ export default {
         err
       }
     },
-    btnRegister () {
-      const { phone, code, password, validatePassword, isAgree } = this;
-      phone && code && password === validatePassword && isAgree &&
+    async btnRegister () {
+      const success = await this.$validator.validateAll();
+      const { phone, code, password } = this;
+      if (success) {
         this.$store.dispatch('register', { phone, code, password })
           .then(res => {
             if (res.code == 200) {
@@ -106,6 +121,7 @@ export default {
             }
           })
           .catch(err => err)
+      }
     }
   }
 }
